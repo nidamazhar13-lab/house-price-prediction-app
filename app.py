@@ -3,7 +3,6 @@ import pandas as pd
 import joblib
 import plotly.express as px
 import os
-import base64
 
 # ============================================================
 # PAGE SETUP
@@ -17,75 +16,55 @@ st.set_page_config(
 )
 
 # ============================================================
-# BACKGROUND IMAGE FUNCTION
+# BASE PATH
 # ============================================================
 
-def get_base64_image(image_path):
-    with open(image_path, "rb") as image_file:
-        encoded = base64.b64encode(image_file.read()).decode()
-    return encoded
-
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-BG_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "house_bg.jpg")
-
-if os.path.exists(BG_IMAGE_PATH):
-    bg_image = get_base64_image(BG_IMAGE_PATH)
-else:
-    bg_image = ""
 
 # ============================================================
 # CSS DESIGN
 # ============================================================
 
-st.markdown(f"""
+st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-html, body, [class*="css"] {{
+html, body, [class*="css"] {
     font-family: 'Inter', sans-serif;
-}}
+}
 
-.stApp {{
-    background-image:
-        linear-gradient(rgba(20, 24, 22, 0.72), rgba(20, 24, 22, 0.78)),
-        url("data:image/jpg;base64,{bg_image}");
+/* Main background image */
+.stApp {
+    background:
+        linear-gradient(rgba(255, 248, 234, 0.45), rgba(60, 49, 43, 0.50)),
+        url("https://raw.githubusercontent.com/nidamazhar13-lab/house-price-prediction-app/main/assets/house_bg.png");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     color: #3C312B;
-}}
+}
 
-.block-container {{
-    padding-top: 2rem;
+/* Wider layout */
+.block-container {
+    padding-top: 1.5rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
     padding-bottom: 2rem;
-    max-width: 1180px;
-}}
+    max-width: 100% !important;
+}
 
-.hero {{
-    background: linear-gradient(135deg, rgba(60,49,43,0.96), rgba(64,62,45,0.94));
-    padding: 42px;
-    border-radius: 32px;
-    margin-bottom: 28px;
-    box-shadow: 0 22px 55px rgba(0,0,0,0.35);
+/* Hero section */
+.hero {
+    background: linear-gradient(135deg, rgba(60,49,43,0.95), rgba(64,62,45,0.90));
+    padding: 38px 44px;
+    border-radius: 30px;
+    margin-bottom: 26px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.28);
     border: 1px solid rgba(247, 178, 44, 0.45);
     color: #FFF8EA;
-    position: relative;
-    overflow: hidden;
-}}
+}
 
-.hero::before {{
-    content: "";
-    position: absolute;
-    width: 270px;
-    height: 270px;
-    background: rgba(247, 178, 44, 0.18);
-    border-radius: 50%;
-    right: -90px;
-    top: -90px;
-}}
-
-.hero-badge {{
+.hero-badge {
     display: inline-block;
     background: #F7B22C;
     color: #3C312B;
@@ -94,200 +73,210 @@ html, body, [class*="css"] {{
     font-size: 13px;
     font-weight: 900;
     margin-bottom: 14px;
-    box-shadow: 0 8px 20px rgba(247, 178, 44, 0.28);
-    position: relative;
-    z-index: 2;
-}}
+}
 
-.hero h1 {{
+.hero h1 {
     color: #FFF8EA;
-    font-size: 50px;
-    line-height: 1.08;
+    font-size: 46px;
+    line-height: 1.10;
     margin-bottom: 12px;
     font-weight: 900;
-    position: relative;
-    z-index: 2;
-}}
+}
 
-.hero p {{
+.hero p {
     color: #F7E8C8;
     font-size: 17px;
-    max-width: 850px;
-    position: relative;
-    z-index: 2;
-}}
+    max-width: 950px;
+}
 
-.card {{
+/* Section title */
+.section-title {
+    background: rgba(255, 248, 234, 0.90);
+    padding: 22px 28px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    border: 1px solid rgba(247, 178, 44, 0.40);
+}
+
+.section-title h2 {
+    color: #3C312B;
+    margin-bottom: 6px;
+    font-weight: 900;
+}
+
+.section-title p {
+    color: #5b5048;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* General cards */
+.card {
     background: rgba(255, 248, 234, 0.94);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 28px;
-    border-radius: 28px;
-    box-shadow: 0 16px 42px rgba(0,0,0,0.25);
+    padding: 26px;
+    border-radius: 26px;
+    box-shadow: 0 14px 38px rgba(0,0,0,0.18);
     margin-bottom: 24px;
     border: 1px solid rgba(247, 178, 44, 0.35);
     color: #3C312B;
-}}
+}
 
-.metric-card {{
-    background: linear-gradient(135deg, rgba(60,49,43,0.97), rgba(64,62,45,0.96));
+/* Metric cards */
+.metric-card {
+    background: linear-gradient(135deg, rgba(60,49,43,0.98), rgba(64,62,45,0.95));
     padding: 24px;
-    border-radius: 26px;
+    border-radius: 24px;
     text-align: center;
-    box-shadow: 0 14px 32px rgba(0,0,0,0.28);
-    border: 1px solid rgba(247, 178, 44, 0.45);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.26);
+    border: 1px solid rgba(247, 178, 44, 0.50);
     margin-bottom: 16px;
-}}
+}
 
-.metric-card h3 {{
+.metric-card h3 {
     color: #F7B22C;
     font-size: 15px;
     margin-bottom: 5px;
     font-weight: 900;
-}}
+}
 
-.metric-card h2 {{
+.metric-card h2 {
     color: #FFF8EA;
-    font-size: 28px;
+    font-size: 27px;
     margin: 0;
     font-weight: 900;
-}}
+}
 
-.prediction-box {{
+/* Prediction box */
+.prediction-box {
     background: linear-gradient(135deg, #F7B22C 0%, #C57A16 100%);
-    padding: 38px;
-    border-radius: 30px;
+    padding: 36px;
+    border-radius: 28px;
     color: #3C312B;
     text-align: center;
     box-shadow: 0 18px 45px rgba(247, 178, 44, 0.42);
     margin-top: 20px;
-    border: 1px solid rgba(255, 248, 234, 0.70);
-}}
+}
 
-.prediction-box h2 {{
+.prediction-box h2 {
     font-size: 22px;
     margin-bottom: 8px;
     font-weight: 900;
-}}
+}
 
-.prediction-box h1 {{
-    font-size: 54px;
+.prediction-box h1 {
+    font-size: 52px;
     margin: 0;
     font-weight: 900;
-}}
+}
 
-.info-box {{
-    background: rgba(247, 232, 200, 0.92);
+/* Info boxes */
+.info-box {
+    background: rgba(247, 232, 200, 0.95);
     padding: 18px;
     border-radius: 18px;
     border-left: 7px solid #F7B22C;
     margin-bottom: 15px;
     color: #3C312B;
-    box-shadow: 0 8px 18px rgba(60, 49, 43, 0.10);
-}}
+}
 
-div[data-testid="stTabs"] button {{
-    background-color: rgba(255, 248, 234, 0.78);
+/* Tabs */
+div[data-testid="stTabs"] button {
+    background-color: rgba(255, 248, 234, 0.90);
     color: #3C312B;
     border-radius: 999px;
     font-weight: 900;
     padding: 10px 18px;
     margin-right: 8px;
-}}
+}
 
-div[data-testid="stTabs"] button:hover {{
+div[data-testid="stTabs"] button:hover {
     background-color: #F7B22C;
     color: #3C312B;
-}}
+}
 
-.stButton > button {{
+/* Button */
+.stButton > button {
     background: linear-gradient(135deg, #3C312B 0%, #403E2D 100%);
     color: #F7B22C;
     border: 1px solid rgba(247, 178, 44, 0.55);
-    border-radius: 22px;
+    border-radius: 20px;
     padding: 0.95rem 1rem;
     font-size: 17px;
     font-weight: 900;
-    box-shadow: 0 14px 30px rgba(0,0,0,0.28);
-}}
+    box-shadow: 0 12px 30px rgba(0,0,0,0.24);
+}
 
-.stButton > button:hover {{
+.stButton > button:hover {
     background: linear-gradient(135deg, #F7B22C 0%, #C57A16 100%);
     color: #3C312B;
-    border: 1px solid #F7B22C;
-}}
+}
 
-[data-testid="stNumberInput"] input {{
+/* Input boxes */
+[data-testid="stNumberInput"] input {
     background-color: #FFF8EA;
     color: #3C312B;
     border: 2px solid #D7C3A5;
-    border-radius: 16px;
+    border-radius: 15px;
     font-weight: 700;
-}}
+}
 
-[data-testid="stNumberInput"] input:focus {{
-    border: 2px solid #F7B22C;
-    box-shadow: 0 0 0 2px rgba(247,178,44,0.25);
-}}
-
-div[data-baseweb="select"] > div {{
+div[data-baseweb="select"] > div {
     background-color: #FFF8EA;
     border: 2px solid #D7C3A5;
-    border-radius: 16px;
+    border-radius: 15px;
     color: #3C312B;
     font-weight: 700;
-}}
+}
 
-.stSlider {{
-    padding-top: 8px;
-    padding-bottom: 8px;
-}}
-
-.footer {{
+/* Footer */
+.footer {
     text-align: center;
     color: #FFF8EA;
     margin-top: 28px;
     font-size: 14px;
-    font-weight: 700;
-}}
+    font-weight: 800;
+}
 
-@media (max-width: 768px) {{
-    .stApp {{
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .stApp {
         background-attachment: scroll;
-    }}
+        background-position: center top;
+    }
 
-    .block-container {{
+    .block-container {
         padding-left: 1rem;
         padding-right: 1rem;
         padding-top: 1rem;
-    }}
+    }
 
-    .hero {{
-        padding: 26px;
-        border-radius: 24px;
-    }}
+    .hero {
+        padding: 24px;
+        border-radius: 22px;
+    }
 
-    .hero h1 {{
-        font-size: 32px;
-    }}
+    .hero h1 {
+        font-size: 30px;
+    }
 
-    .hero p {{
+    .hero p {
         font-size: 15px;
-    }}
+    }
 
-    .card {{
+    .card {
         padding: 18px;
         border-radius: 22px;
-    }}
+    }
 
-    .prediction-box h1 {{
-        font-size: 36px;
-    }}
+    .prediction-box h1 {
+        font-size: 34px;
+    }
 
-    .metric-card h2 {{
+    .metric-card h2 {
         font-size: 22px;
-    }}
-}}
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -323,9 +312,12 @@ st.markdown("""
 # INPUT SECTION
 # ============================================================
 
-st.markdown('<div class="card">', unsafe_allow_html=True)
-st.subheader("🏠 Enter House Details")
-st.write("Fill the values below and click **Predict House Price**.")
+st.markdown("""
+<div class="section-title">
+    <h2>🏠 Enter House Details</h2>
+    <p>Fill the values below and click <b>Predict House Price</b>.</p>
+</div>
+""", unsafe_allow_html=True)
 
 tab1, tab2, tab3 = st.tabs(["📐 Size & Rooms", "⭐ Quality & Age", "📍 Location & Type"])
 
@@ -461,8 +453,6 @@ with tab3:
             ["1Story", "2Story", "1.5Fin", "1.5Unf", "SFoyer", "SLvl", "2.5Unf", "2.5Fin"]
         )
 
-st.markdown('</div>', unsafe_allow_html=True)
-
 # ============================================================
 # INPUT DATA FOR MODEL
 # ============================================================
@@ -532,7 +522,7 @@ st.markdown('<div class="card">', unsafe_allow_html=True)
 st.subheader("🔮 Predicted Selling Price")
 st.write("Click the button below to estimate the house selling price.")
 
-if st.button("Predict House Price", use_container_width=True):
+if st.button("Predict House Price", width="stretch"):
     prediction = model.predict(input_data)[0]
 
     st.markdown(f"""
@@ -551,7 +541,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('<div class="card">', unsafe_allow_html=True)
 st.subheader("📌 Selected House Features")
 st.write("These values are passed to the trained machine learning model.")
-st.dataframe(input_data, use_container_width=True)
+st.dataframe(input_data, width="stretch")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================
@@ -590,7 +580,7 @@ fig.update_layout(
     title_font_size=20
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================
