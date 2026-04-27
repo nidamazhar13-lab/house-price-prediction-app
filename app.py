@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import plotly.express as px
 import os
+import base64
 
 # =========================================================
 # PAGE CONFIG
@@ -18,16 +19,53 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "house_price_model.pkl")
 DATA_PATH = os.path.join(BASE_DIR, "AmesHousing.csv")
 
-HERO_IMAGE_URL = "https://raw.githubusercontent.com/nidamazhar13-lab/house-price-prediction-app/main/assets/house_bg.png"
-
 # =========================================================
-# LOAD MODEL
+# HELPER FUNCTIONS
 # =========================================================
-if not os.path.exists(MODEL_PATH):
-    st.error("house_price_model.pkl file not found. Please keep it in the same folder as app.py.")
-    st.stop()
+def get_image_base64():
+    candidates = [
+        os.path.join(BASE_DIR, "assets", "house_bg.jpg"),
+        os.path.join(BASE_DIR, "assets", "house_bg.png"),
+        os.path.join(BASE_DIR, "house_bg.jpg"),
+        os.path.join(BASE_DIR, "house_bg.png"),
+    ]
+    for path in candidates:
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                encoded = base64.b64encode(f.read()).decode()
+            mime = "image/png" if path.lower().endswith(".png") else "image/jpeg"
+            return f"data:{mime};base64,{encoded}"
+    return None
 
-model = joblib.load(MODEL_PATH)
+def hero_section():
+    st.markdown("""
+    <div class="hero-card">
+        <div class="hero-content">
+            <div class="hero-badge">Smart House Valuation</div>
+            <h1>Predict the Estimated Value of a House</h1>
+            <p>
+                Enter property features like living area, rooms, bathrooms, location, quality,
+                basement, garage and house age to predict an estimated selling price using
+                a trained machine learning model.
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+def metric_card(label, value, subtitle=""):
+    st.markdown(f"""
+    <div class="metric-card">
+        <div class="metric-label">{label}</div>
+        <div class="metric-value">{value}</div>
+        <div class="metric-sub">{subtitle}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+@st.cache_resource
+def load_model():
+    if not os.path.exists(MODEL_PATH):
+        return None
+    return joblib.load(MODEL_PATH)
 
 @st.cache_data
 def load_data():
@@ -35,7 +73,19 @@ def load_data():
         return pd.read_csv(DATA_PATH)
     return None
 
+model = load_model()
 data = load_data()
+hero_image = get_image_base64()
+
+if hero_image:
+    hero_background = f"""
+        linear-gradient(90deg, rgba(7, 16, 34, 0.88), rgba(7, 16, 34, 0.42)),
+        url("{hero_image}")
+    """
+else:
+    hero_background = """
+        linear-gradient(135deg, #0F172A 0%, #1E3A8A 50%, #7C3AED 100%)
+    """
 
 # =========================================================
 # CSS
@@ -48,430 +98,363 @@ html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
 }}
 
-html {{
-    scroll-behavior: smooth;
-}}
-
 body {{
     color: #0F172A;
 }}
 
 .stApp {{
     background:
-        radial-gradient(circle at top left, rgba(79, 124, 255, 0.12), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.10), transparent 30%),
-        linear-gradient(135deg, #EEF4FF 0%, #F8FBFF 55%, #EEF2FF 100%);
-    color: #0F172A;
+        radial-gradient(circle at top left, rgba(59,130,246,0.10), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(124,58,237,0.10), transparent 25%),
+        linear-gradient(135deg, #F4F8FF 0%, #EEF4FF 45%, #F8FBFF 100%);
 }}
 
 header[data-testid="stHeader"] {{
-    background: rgba(0,0,0,0);
+    background: transparent;
 }}
 
 .block-container {{
-    max-width: 1260px !important;
-    padding-top: 1.2rem;
+    max-width: 1250px;
+    padding-top: 1rem;
     padding-bottom: 2rem;
-    padding-left: 1.8rem;
-    padding-right: 1.8rem;
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
 }}
 
 section[data-testid="stSidebar"] {{
-    background: #FFFFFF !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F7FAFF 100%) !important;
     border-right: 1px solid #E2E8F0 !important;
-    box-shadow: 8px 0 28px rgba(15, 23, 42, 0.06);
-}}
-
-section[data-testid="stSidebar"] * {{
-    color: #0F172A;
+    box-shadow: 10px 0 28px rgba(15, 23, 42, 0.06);
 }}
 
 [data-testid="stSidebarContent"] {{
-    background: #FFFFFF !important;
+    background: transparent !important;
 }}
 
-.sidebar-logo {{
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 10px 0 20px 0;
-}}
-
-.logo-icon {{
-    width: 46px;
-    height: 46px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #4F7CFF, #8B5CF6);
+.sidebar-brand {{
+    background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 60%, #7C3AED 100%);
+    border-radius: 22px;
+    padding: 18px 16px;
     color: white;
+    margin-bottom: 18px;
+    box-shadow: 0 16px 34px rgba(30,58,138,0.20);
+}}
+
+.sidebar-brand h2 {{
+    margin: 0;
     font-size: 22px;
-    box-shadow: 0 10px 22px rgba(79,124,255,0.28);
-}}
-
-.logo-title {{
-    font-size: 19px;
     font-weight: 900;
-    line-height: 1.1;
-    color: #0F172A;
+    color: white;
 }}
 
-.logo-subtitle {{
-    font-size: 12px;
-    font-weight: 700;
-    color: #64748B;
+.sidebar-brand p {{
+    margin: 5px 0 0 0;
+    color: #E2E8F0;
+    font-size: 13px;
+    font-weight: 600;
 }}
 
 div[role="radiogroup"] > label {{
-    background: transparent;
-    padding: 10px 12px;
-    border-radius: 14px;
-    margin-bottom: 8px;
-    color: #334155 !important;
-    font-weight: 700;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    padding: 12px 14px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 8px 18px rgba(15,23,42,0.04);
 }}
 
 div[role="radiogroup"] > label:hover {{
-    background: #EEF4FF;
+    border-color: #BFDBFE;
+    background: #F8FBFF;
 }}
 
-.hero {{
-    background:
-        linear-gradient(90deg, rgba(12, 25, 50, 0.82), rgba(12, 25, 50, 0.42)),
-        url('{HERO_IMAGE_URL}');
+.hero-card {{
+    background-image: {hero_background};
     background-size: cover;
     background-position: center;
     min-height: 290px;
-    border-radius: 32px;
-    padding: 42px 44px;
+    border-radius: 30px;
+    padding: 38px;
     display: flex;
     align-items: center;
-    box-shadow: 0 24px 55px rgba(15,23,42,0.14);
-    border: 1px solid rgba(255,255,255,0.75);
     margin-bottom: 22px;
-    overflow: hidden;
+    box-shadow: 0 22px 50px rgba(15,23,42,0.12);
+    border: 1px solid rgba(255,255,255,0.7);
 }}
 
 .hero-content {{
-    max-width: 720px;
+    max-width: 760px;
 }}
 
 .hero-badge {{
     display: inline-block;
-    background: rgba(255,255,255,0.94);
+    background: rgba(255,255,255,0.92);
     color: #2563EB;
-    padding: 9px 16px;
+    padding: 8px 14px;
     border-radius: 999px;
     font-size: 13px;
     font-weight: 900;
-    margin-bottom: 15px;
-}}
-
-.hero h1 {{
-    color: #FFFFFF;
-    font-size: 46px;
-    font-weight: 900;
-    line-height: 1.06;
-    letter-spacing: -0.5px;
     margin-bottom: 14px;
 }}
 
-.hero p {{
+.hero-card h1 {{
+    margin: 0 0 14px 0;
+    color: white;
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1.08;
+}}
+
+.hero-card p {{
+    margin: 0;
     color: #EAF2FF;
-    font-size: 17px;
-    line-height: 1.6;
-    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
 }}
 
-.card {{
-    background: rgba(255,255,255,0.97);
-    border: 1px solid #E2E8F0;
-    border-radius: 28px;
-    padding: 24px;
-    box-shadow: 0 16px 42px rgba(15,23,42,0.06);
+.glass-card {{
+    background: rgba(255,255,255,0.86);
+    border: 1px solid rgba(226,232,240,0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 26px;
+    padding: 22px;
+    box-shadow: 0 16px 36px rgba(15,23,42,0.06);
     margin-bottom: 20px;
 }}
 
-.card h3 {{
-    margin-top: 0;
-    color: #0F172A;
+.section-head h2 {{
+    margin: 0 0 6px 0;
     font-weight: 900;
+    color: #0F172A;
 }}
 
-.form-card {{
-    background: rgba(255,255,255,0.98);
-    border: 1px solid #DCE5F2;
-    border-radius: 30px;
-    padding: 26px;
-    box-shadow: 0 16px 44px rgba(15,23,42,0.06);
-    margin-bottom: 20px;
-}}
-
-.form-title {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-}}
-
-.form-title h2 {{
+.section-head p {{
     margin: 0;
-    color: #0F172A;
-    font-weight: 900;
-}}
-
-.form-title p {{
-    margin: 6px 0 0 0;
     color: #64748B;
     font-weight: 600;
 }}
 
-.chip {{
+.form-chip {{
     display: inline-block;
-    background: linear-gradient(135deg, #4F7CFF, #8B5CF6);
-    color: #FFFFFF;
+    background: linear-gradient(135deg, #2563EB, #7C3AED);
+    color: white;
     padding: 10px 16px;
     border-radius: 999px;
     font-size: 13px;
     font-weight: 900;
-    white-space: nowrap;
 }}
 
 .metric-card {{
-    background: rgba(255,255,255,0.98);
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,255,0.96));
     border: 1px solid #E2E8F0;
-    border-radius: 24px;
-    padding: 20px;
-    box-shadow: 0 14px 30px rgba(15,23,42,0.05);
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 14px 28px rgba(15,23,42,0.05);
     margin-bottom: 16px;
 }}
 
 .metric-label {{
-    color: #64748B;
+    font-size: 13px;
     font-weight: 800;
-    font-size: 14px;
-    margin-bottom: 6px;
+    color: #64748B;
+    margin-bottom: 5px;
 }}
 
 .metric-value {{
-    color: #0F172A;
     font-size: 28px;
     font-weight: 900;
+    color: #0F172A;
 }}
 
-.metric-small {{
-    color: #2563EB;
-    font-size: 13px;
+.metric-sub {{
+    font-size: 12px;
     font-weight: 700;
+    color: #2563EB;
     margin-top: 4px;
 }}
 
 .prediction-box {{
-    background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 55%, #7C3AED 100%);
+    background: linear-gradient(135deg, #0F172A 0%, #1D4ED8 50%, #7C3AED 100%);
+    border-radius: 28px;
+    padding: 30px;
     color: white;
-    padding: 34px;
-    border-radius: 30px;
-    box-shadow: 0 18px 45px rgba(30,58,138,0.24);
-    margin-bottom: 20px;
+    box-shadow: 0 20px 40px rgba(37,99,235,0.24);
+    margin-bottom: 18px;
 }}
 
 .prediction-box h2 {{
     margin: 0 0 8px 0;
-    color: #DCE9FF;
-    font-size: 20px;
+    color: #DBEAFE;
+    font-size: 19px;
     font-weight: 800;
 }}
 
 .prediction-box h1 {{
     margin: 0;
-    font-size: 50px;
+    font-size: 48px;
     font-weight: 900;
 }}
 
 .info-box {{
     background: #F8FBFF;
-    border-left: 5px solid #4F7CFF;
-    padding: 16px;
+    border-left: 5px solid #2563EB;
+    padding: 14px 16px;
     border-radius: 16px;
+    margin-bottom: 14px;
     color: #0F172A;
-    margin-bottom: 15px;
-}}
-
-.footer {{
-    text-align: center;
-    color: #64748B;
-    font-size: 14px;
-    font-weight: 700;
-    margin-top: 24px;
-}}
-
-.stDataFrame {{
-    border-radius: 18px !important;
-    overflow: hidden;
 }}
 
 div[data-baseweb="tab-list"] {{
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
 }}
 
 div[data-baseweb="tab"] {{
-    background: #F6F8FC !important;
-    border: 1px solid #DCE5F2 !important;
+    background: #F8FBFF !important;
+    border: 1px solid #DCE6F5 !important;
     border-radius: 999px !important;
     color: #0F172A !important;
     font-weight: 800 !important;
-    padding: 10px 18px !important;
+    padding: 10px 16px !important;
 }}
 
 div[data-baseweb="tab"][aria-selected="true"] {{
-    background: linear-gradient(135deg, #4F7CFF, #8B5CF6) !important;
+    background: linear-gradient(135deg, #2563EB, #7C3AED) !important;
     color: white !important;
     border: none !important;
-    box-shadow: 0 10px 24px rgba(79,124,255,0.24);
+    box-shadow: 0 12px 24px rgba(37,99,235,0.22);
 }}
 
 [data-testid="stNumberInput"] input {{
-    background: #F8FBFF !important;
-    border: 1px solid #D7E2F0 !important;
-    border-radius: 15px !important;
-    font-weight: 800 !important;
+    background: #F9FBFF !important;
+    border: 1px solid #D9E2F0 !important;
+    border-radius: 16px !important;
     color: #0F172A !important;
-    min-height: 42px !important;
+    font-weight: 800 !important;
+    min-height: 44px !important;
 }}
 
 div[data-baseweb="select"] > div {{
-    background: #F8FBFF !important;
-    border: 1px solid #D7E2F0 !important;
-    border-radius: 15px !important;
-    font-weight: 800 !important;
+    background: #F9FBFF !important;
+    border: 1px solid #D9E2F0 !important;
+    border-radius: 16px !important;
     color: #0F172A !important;
-    min-height: 42px !important;
+    font-weight: 800 !important;
+    min-height: 44px !important;
 }}
 
 .stSlider {{
-    padding-top: 4px;
-}}
-
-.stSlider [data-baseweb="slider"] {{
-    padding-top: 8px;
+    padding-top: 6px;
     padding-bottom: 8px;
 }}
 
+.stSlider [data-baseweb="slider"] {{
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}}
+
 .stSlider [data-baseweb="slider"] > div > div {{
-    background: linear-gradient(90deg, #4F7CFF, #8B5CF6) !important;
-    height: 6px !important;
+    background: linear-gradient(90deg, #22C55E 0%, #3B82F6 45%, #7C3AED 100%) !important;
+    height: 8px !important;
     border-radius: 999px !important;
 }}
 
 .stSlider [data-baseweb="slider"] div[role="slider"] {{
-    background: #ffffff !important;
-    border: 4px solid #4F7CFF !important;
-    box-shadow: 0 3px 12px rgba(79,124,255,0.28);
+    background: #FFFFFF !important;
+    border: 4px solid #2563EB !important;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+    width: 20px !important;
+    height: 20px !important;
 }}
 
 .stSlider [data-testid="stTickBar"] {{
-    display: none;
+    display: none !important;
 }}
 
 .stButton > button,
 div[data-testid="stFormSubmitButton"] > button {{
     width: 100%;
-    min-height: 56px;
     border: none !important;
+    min-height: 58px;
     border-radius: 18px !important;
-    color: white !important;
     font-size: 18px !important;
     font-weight: 900 !important;
-    background: linear-gradient(135deg, #2563EB 0%, #4F7CFF 45%, #8B5CF6 100%) !important;
-    box-shadow: 0 16px 30px rgba(79,124,255,0.28);
-    transition: all 0.25s ease-in-out;
+    color: white !important;
+    background: linear-gradient(135deg, #22C55E 0%, #2563EB 48%, #7C3AED 100%) !important;
+    box-shadow: 0 18px 34px rgba(37,99,235,0.24);
+    transition: all 0.2s ease;
 }}
 
 .stButton > button:hover,
 div[data-testid="stFormSubmitButton"] > button:hover {{
     transform: translateY(-1px);
-    box-shadow: 0 18px 34px rgba(79,124,255,0.34);
+    box-shadow: 0 22px 38px rgba(37,99,235,0.30);
 }}
 
-.stButton > button:focus,
-div[data-testid="stFormSubmitButton"] > button:focus {{
-    outline: none !important;
-    box-shadow: 0 0 0 0.18rem rgba(79,124,255,0.20);
+.stDataFrame {{
+    border-radius: 18px !important;
+    overflow: hidden !important;
 }}
 
-label, .stMarkdown, p, h1, h2, h3, h4, h5 {{
-    color: #0F172A;
+.footer {{
+    text-align: center;
+    color: #64748B;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 16px;
+    padding: 8px 0;
 }}
 
 @media (max-width: 992px) {{
-    .hero {{
+    .hero-card {{
         min-height: 250px;
-        padding: 26px;
-        border-radius: 24px;
+        padding: 24px;
     }}
 
-    .hero h1 {{
+    .hero-card h1 {{
         font-size: 34px;
     }}
 
-    .hero p {{
+    .hero-card p {{
         font-size: 15px;
     }}
 
-    .form-title {{
-        flex-direction: column;
-        align-items: flex-start;
+    .metric-value {{
+        font-size: 24px;
     }}
 }}
 
 @media (max-width: 768px) {{
     .block-container {{
-        padding-top: 0.8rem;
-        padding-left: 0.9rem;
-        padding-right: 0.9rem;
-        padding-bottom: 1.5rem;
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+        padding-top: 0.7rem;
     }}
 
-    .stApp {{
-        background: linear-gradient(135deg, #EEF4FF 0%, #F8FBFF 55%, #EEF2FF 100%) !important;
-    }}
-
-    section[data-testid="stSidebar"] {{
-        background: #FFFFFF !important;
-    }}
-
-    [data-testid="stSidebarContent"] {{
-        background: #FFFFFF !important;
-    }}
-
-    .hero {{
-        min-height: 230px;
-        padding: 22px;
+    .hero-card {{
+        min-height: 220px;
+        padding: 20px;
         border-radius: 22px;
-        align-items: flex-end;
+        background-position: center;
     }}
 
-    .hero h1 {{
-        font-size: 29px;
+    .hero-card h1 {{
+        font-size: 28px;
     }}
 
-    .hero p {{
+    .hero-card p {{
         font-size: 14px;
+        line-height: 1.55;
     }}
 
-    .form-card, .card {{
+    .glass-card {{
         padding: 16px;
         border-radius: 20px;
     }}
 
-    .metric-value {{
-        font-size: 22px;
-    }}
-
     .prediction-box {{
-        padding: 24px;
+        padding: 22px;
         border-radius: 22px;
     }}
 
@@ -481,49 +464,29 @@ label, .stMarkdown, p, h1, h2, h3, h4, h5 {{
 
     div[data-baseweb="tab"] {{
         padding: 8px 12px !important;
-        font-size: 13px !important;
+        font-size: 12px !important;
+    }}
+
+    .stSlider [data-baseweb="slider"] > div > div {{
+        height: 7px !important;
+    }}
+
+    .stSlider [data-baseweb="slider"] div[role="slider"] {{
+        width: 18px !important;
+        height: 18px !important;
     }}
 }}
 </style>
 """, unsafe_allow_html=True)
 
 # =========================================================
-# HELPER FUNCTIONS
-# =========================================================
-def hero_section():
-    st.markdown("""
-    <div class="hero">
-        <div class="hero-content">
-            <div class="hero-badge">Smart Home Valuation</div>
-            <h1>Find Your Home’s Estimated Value</h1>
-            <p>
-                Predict house selling prices using area, rooms, bathrooms, location,
-                quality, basement, garage and house age — powered by machine learning.
-            </p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-def metric_card(label, value, small=""):
-    st.markdown(f"""
-    <div class="metric-card">
-        <div class="metric-label">{label}</div>
-        <div class="metric-value">{value}</div>
-        <div class="metric-small">{small}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# =========================================================
 # SIDEBAR
 # =========================================================
 with st.sidebar:
     st.markdown("""
-    <div class="sidebar-logo">
-        <div class="logo-icon">🏡</div>
-        <div>
-            <div class="logo-title">HomeValue</div>
-            <div class="logo-subtitle">House Price Prediction</div>
-        </div>
+    <div class="sidebar-brand">
+        <h2>🏡 HomeValue</h2>
+        <p>Responsive House Price Prediction App</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -534,61 +497,69 @@ with st.sidebar:
             "🔮 Predict Price",
             "📊 Data Insights",
             "📈 Graphs & Analysis",
-            "🎯 Model Performance",
             "ℹ️ About Project"
         ],
         label_visibility="collapsed"
     )
 
-    st.markdown("---")
-    st.markdown("""
-    <div class="card" style="padding:16px; border-radius:20px; box-shadow:none;">
-        <b>Ames Housing Project</b><br>
-        <span style="color:#64748B; font-size:13px;">Responsive ML Price Estimator</span>
-    </div>
-    """, unsafe_allow_html=True)
-
 # =========================================================
-# DASHBOARD PAGE
+# PAGES
 # =========================================================
 def dashboard_page():
     hero_section()
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        metric_card("Dataset", "Ames", "Housing data")
+        metric_card("Dataset", "Ames", "Housing dataset")
     with c2:
-        metric_card("Model Type", "Regression", "House price prediction")
+        metric_card("Model", "Regression", "Selling price prediction")
     with c3:
-        metric_card("Input Features", "16", "Area, rooms, quality")
+        metric_card("Key Inputs", "16", "Area, rooms, quality, location")
     with c4:
-        metric_card("Interface", "Responsive", "Mobile + laptop + tablet")
+        metric_card("Design", "Responsive", "Mobile + laptop + tablet")
 
     st.markdown("""
-    <div class="card">
-        <h3>Project Overview</h3>
-        <p>
-            This application predicts the selling price of a house using machine learning.
-            Users can enter house details, explore data insights, see analysis graphs,
-            and understand the important factors affecting house prices.
-        </p>
+    <div class="glass-card">
+        <div class="section-head">
+            <h2>Project Overview</h2>
+            <p>
+                This application predicts the estimated selling price of a house using machine learning.
+                It analyzes inputs like area, rooms, bathrooms, basement, garage, location,
+                quality, and house age.
+            </p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-# =========================================================
-# PREDICT PAGE
-# =========================================================
+    st.markdown("""
+    <div class="glass-card">
+        <div class="section-head">
+            <h2>What This App Does</h2>
+            <p>
+                • Predict house price<br>
+                • Show useful data insights<br>
+                • Display attractive graphs and analysis<br>
+                • Provide a clean and responsive interface
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 def predict_page():
+    if model is None:
+        st.error("house_price_model.pkl file not found. Keep it in the same folder as app.py.")
+        return
+
     hero_section()
 
     st.markdown("""
-    <div class="form-card">
-        <div class="form-title">
-            <div>
-                <h2>🏠 House Price Prediction Form</h2>
-                <p>Fill all important details below and click the button to get the estimated selling price.</p>
+    <div class="glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div class="section-head">
+                <h2>Enter House Details</h2>
+                <p>Fill the values below and click Predict House Price.</p>
             </div>
-            <div class="chip">Ames Housing Model</div>
+            <div class="form-chip">Ames Housing Model</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -596,10 +567,11 @@ def predict_page():
     with st.form("prediction_form"):
         tab1, tab2, tab3 = st.tabs(["📐 Size & Rooms", "⭐ Quality & Age", "📍 Location & Type"])
 
+        # ---------------- TAB 1 ----------------
         with tab1:
-            c1, c2, c3 = st.columns(3)
+            col1, col2 = st.columns(2)
 
-            with c1:
+            with col1:
                 gr_liv_area = st.number_input(
                     "Living Area / Gr Liv Area (sq ft)",
                     min_value=0,
@@ -607,7 +579,6 @@ def predict_page():
                     value=0,
                     step=50
                 )
-
                 lot_area = st.number_input(
                     "Lot Area (sq ft)",
                     min_value=0,
@@ -615,23 +586,48 @@ def predict_page():
                     value=0,
                     step=100
                 )
+                bedrooms = st.number_input(
+                    "Bedrooms",
+                    min_value=0,
+                    max_value=20,
+                    value=0,
+                    step=1
+                )
 
-            with c2:
-                bedrooms = st.slider("Bedrooms", 0, 20, 0)
-                total_rooms = st.slider("Total Rooms Above Ground", 0, 30, 0)
+            with col2:
+                total_rooms = st.number_input(
+                    "Total Rooms Above Ground",
+                    min_value=0,
+                    max_value=30,
+                    value=0,
+                    step=1
+                )
+                full_bath = st.number_input(
+                    "Full Bathrooms",
+                    min_value=0,
+                    max_value=15,
+                    value=0,
+                    step=1
+                )
+                half_bath = st.number_input(
+                    "Half Bathrooms",
+                    min_value=0,
+                    max_value=10,
+                    value=0,
+                    step=1
+                )
 
-            with c3:
-                full_bath = st.slider("Full Bathrooms", 0, 15, 0)
-                half_bath = st.slider("Half Bathrooms", 0, 10, 0)
-
+        # ---------------- TAB 2 ----------------
         with tab2:
-            c1, c2, c3 = st.columns(3)
+            col1, col2 = st.columns(2)
 
-            with c1:
+            with col1:
                 overall_qual = st.slider("Overall Quality", 0, 10, 0)
                 overall_cond = st.slider("Overall Condition", 0, 10, 0)
+                house_age = st.slider("House Age", 0, 200, 0)
 
-            with c2:
+            with col2:
+                remod_age = st.slider("Years Since Remodel", 0, 100, 0)
                 total_bsmt_sf = st.number_input(
                     "Total Basement Area (sq ft)",
                     min_value=0,
@@ -639,7 +635,6 @@ def predict_page():
                     value=0,
                     step=50
                 )
-
                 garage_area = st.number_input(
                     "Garage Area (sq ft)",
                     min_value=0,
@@ -647,43 +642,43 @@ def predict_page():
                     value=0,
                     step=25
                 )
-
-            with c3:
-                garage_cars = st.slider("Garage Car Capacity", 0, 10, 0)
-                house_age = st.slider("House Age", 0, 200, 0)
-                remod_age = st.slider("Years Since Remodel", 0, 100, 0)
-
-        with tab3:
-            c1, c2, c3 = st.columns(3)
-
-            with c1:
-                neighborhood = st.selectbox(
-                    "Neighborhood / Location",
-                    [
-                        "Select Location", "NAmes", "CollgCr", "OldTown", "Edwards", "Somerst",
-                        "NridgHt", "Gilbert", "Sawyer", "NWAmes", "SawyerW",
-                        "BrkSide", "Crawfor", "Mitchel", "NoRidge", "Timber",
-                        "IDOTRR", "ClearCr", "StoneBr", "SWISU", "MeadowV",
-                        "Blmngtn", "BrDale", "Veenker", "NPkVill", "Blueste"
-                    ]
+                garage_cars = st.number_input(
+                    "Garage Car Capacity",
+                    min_value=0,
+                    max_value=10,
+                    value=0,
+                    step=1
                 )
 
-            with c2:
+        # ---------------- TAB 3 ----------------
+        with tab3:
+            col1, col2 = st.columns(2)
+
+            neighborhoods = [
+                "Select Location", "NAmes", "CollgCr", "OldTown", "Edwards", "Somerst",
+                "NridgHt", "Gilbert", "Sawyer", "NWAmes", "SawyerW",
+                "BrkSide", "Crawfor", "Mitchel", "NoRidge", "Timber",
+                "IDOTRR", "ClearCr", "StoneBr", "SWISU", "MeadowV",
+                "Blmngtn", "BrDale", "Veenker", "NPkVill", "Blueste"
+            ]
+
+            with col1:
+                neighborhood = st.selectbox("Neighborhood / Location", neighborhoods)
                 bldg_type = st.selectbox(
                     "Building Type",
                     ["Select Building Type", "1Fam", "TwnhsE", "Twnhs", "Duplex", "2fmCon"]
                 )
 
-            with c3:
+            with col2:
                 house_style = st.selectbox(
                     "House Style",
                     ["Select House Style", "1Story", "2Story", "1.5Fin", "1.5Unf", "SFoyer", "SLvl", "2.5Unf", "2.5Fin"]
                 )
 
-        submit = st.form_submit_button("✨ Predict House Price", use_container_width=True)
+        submitted = st.form_submit_button("✨ Predict House Price", use_container_width=True)
 
-    if submit:
-        required_missing = (
+    if submitted:
+        missing_required = (
             gr_liv_area <= 0 or
             lot_area <= 0 or
             total_rooms <= 0 or
@@ -694,8 +689,8 @@ def predict_page():
             house_style == "Select House Style"
         )
 
-        if required_missing:
-            st.warning("Please fill the required fields properly before prediction.")
+        if missing_required:
+            st.warning("Please fill all important required values properly before prediction.")
             return
 
         input_data = pd.DataFrame({
@@ -717,7 +712,11 @@ def predict_page():
             "RemodAge": [remod_age]
         })
 
-        prediction = model.predict(input_data)[0]
+        try:
+            prediction = model.predict(input_data)[0]
+        except Exception as e:
+            st.error(f"Prediction error: {e}")
+            return
 
         st.markdown(f"""
         <div class="prediction-box">
@@ -728,27 +727,32 @@ def predict_page():
 
         c1, c2, c3, c4 = st.columns(4)
         with c1:
-            metric_card("Living Area", f"{gr_liv_area:,} sq ft", "User input")
+            metric_card("Living Area", f"{gr_liv_area:,} sq ft", "Entered value")
         with c2:
             metric_card("Total Rooms", total_rooms, "Above ground")
         with c3:
             metric_card("Quality Score", f"{overall_qual}/10", "Overall quality")
         with c4:
-            metric_card("House Age", f"{house_age} yrs", "Property age")
+            metric_card("House Age", f"{house_age} yrs", "Age of house")
 
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("📌 Selected House Features")
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="section-head">
+            <h2>Selected House Features</h2>
+            <p>These are the values used for prediction.</p>
+        </div>
+        """, unsafe_allow_html=True)
         st.dataframe(input_data, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
         chart_data = pd.DataFrame({
             "Feature": [
-                "Living Area", "Lot Area", "Bedrooms", "Bathrooms",
-                "Rooms", "Quality", "Condition", "Basement Area",
+                "Living Area", "Lot Area", "Bedrooms", "Full Bath", "Half Bath",
+                "Total Rooms", "Quality", "Condition", "Basement Area",
                 "Garage Area", "Garage Cars", "House Age", "Remodel Age"
             ],
             "Value": [
-                gr_liv_area, lot_area, bedrooms, full_bath + half_bath,
+                gr_liv_area, lot_area, bedrooms, full_bath, half_bath,
                 total_rooms, overall_qual, overall_cond, total_bsmt_sf,
                 garage_area, garage_cars, house_age, remod_age
             ]
@@ -761,63 +765,34 @@ def predict_page():
             text="Value",
             title="Input Feature Visualization"
         )
-        fig.update_traces(marker_color="#4F7CFF", textfont_color="#0F172A")
+        fig.update_traces(
+            marker_color="#3B82F6",
+            textposition="outside",
+            textfont=dict(color="#0F172A", size=12)
+        )
         fig.update_layout(
             height=430,
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="#F8FBFF",
-            font=dict(color="#0F172A"),
             title_font=dict(size=22, color="#0F172A"),
-            xaxis=dict(gridcolor="rgba(15,23,42,0.06)"),
+            font=dict(color="#0F172A"),
+            xaxis=dict(gridcolor="rgba(15,23,42,0.06)", tickangle=-20),
             yaxis=dict(gridcolor="rgba(15,23,42,0.06)")
         )
 
-        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.plotly_chart(fig, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-# =========================================================
-# DATA INSIGHTS PAGE
-# =========================================================
 def data_insights_page():
     hero_section()
 
     st.markdown("""
-    <div class="card">
-        <h3>📊 Data Insights</h3>
-        <p>
-            The Ames Housing dataset contains house-related features such as area, rooms,
-            bathrooms, quality, condition, garage, basement, neighborhood, and selling price.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if data is not None:
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            metric_card("Rows", f"{data.shape[0]:,}", "Total records")
-        with c2:
-            metric_card("Columns", data.shape[1], "Dataset features")
-        with c3:
-            metric_card("Missing Values", f"{int(data.isnull().sum().sum()):,}", "Before cleaning")
-
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("Dataset Preview")
-        st.dataframe(data.head(20), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        st.warning("AmesHousing.csv file not found.")
-
-# =========================================================
-# GRAPHS PAGE
-# =========================================================
-def graphs_page():
-    hero_section()
-
-    st.markdown("""
-    <div class="card">
-        <h3>📈 Graphs & Analysis</h3>
-        <p>These graphs help visualize important trends in house prices.</p>
+    <div class="glass-card">
+        <div class="section-head">
+            <h2>Data Insights</h2>
+            <p>A quick overview of the Ames Housing dataset used for this project.</p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -825,102 +800,109 @@ def graphs_page():
         st.warning("AmesHousing.csv file not found.")
         return
 
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        metric_card("Rows", f"{data.shape[0]:,}", "Total records")
+    with c2:
+        metric_card("Columns", data.shape[1], "Total dataset columns")
+    with c3:
+        metric_card("Missing Values", int(data.isnull().sum().sum()), "Before handling")
+
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-head">
+        <h2>Dataset Preview</h2>
+        <p>First 20 rows of the dataset.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.dataframe(data.head(20), use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+def graphs_page():
+    hero_section()
+
+    if data is None:
+        st.warning("AmesHousing.csv file not found.")
+        return
+
+    st.markdown("""
+    <div class="glass-card">
+        <div class="section-head">
+            <h2>Graphs & Analysis</h2>
+            <p>Visual exploration of important housing features and selling price.</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     if "SalePrice" in data.columns:
         fig1 = px.histogram(data, x="SalePrice", nbins=40, title="Sale Price Distribution")
-        fig1.update_traces(marker_color="#4F7CFF")
+        fig1.update_traces(marker_color="#2563EB")
         fig1.update_layout(
-            template="plotly_white",
-            height=420,
+            height=400,
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="#F8FBFF"
+            plot_bgcolor="#F8FBFF",
+            font=dict(color="#0F172A")
         )
         st.plotly_chart(fig1, use_container_width=True)
 
     if "Overall Qual" in data.columns and "SalePrice" in data.columns:
         avg_quality = data.groupby("Overall Qual")["SalePrice"].mean().reset_index()
         fig2 = px.bar(avg_quality, x="Overall Qual", y="SalePrice", title="Average Sale Price by Overall Quality")
-        fig2.update_traces(marker_color="#8B5CF6")
+        fig2.update_traces(marker_color="#7C3AED")
         fig2.update_layout(
-            template="plotly_white",
-            height=420,
+            height=400,
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="#F8FBFF"
+            plot_bgcolor="#F8FBFF",
+            font=dict(color="#0F172A")
         )
         st.plotly_chart(fig2, use_container_width=True)
 
     if "Gr Liv Area" in data.columns and "SalePrice" in data.columns:
         fig3 = px.scatter(data, x="Gr Liv Area", y="SalePrice", title="Living Area vs Sale Price")
-        fig3.update_traces(marker_color="#2563EB", opacity=0.65)
+        fig3.update_traces(marker_color="#22C55E", opacity=0.65)
         fig3.update_layout(
-            template="plotly_white",
             height=420,
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="#F8FBFF"
+            plot_bgcolor="#F8FBFF",
+            font=dict(color="#0F172A")
         )
         st.plotly_chart(fig3, use_container_width=True)
 
-# =========================================================
-# MODEL PERFORMANCE PAGE
-# =========================================================
-def model_performance_page():
-    hero_section()
-
-    st.markdown("""
-    <div class="card">
-        <h3>🎯 Model Performance</h3>
-        <p>
-            The house price model is evaluated using regression metrics such as RMSE and MAE.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        metric_card("Metric", "RMSE", "Root Mean Squared Error")
-    with c2:
-        metric_card("Metric", "MAE", "Mean Absolute Error")
-    with c3:
-        metric_card("Target", "SalePrice", "Selling price")
-
-    st.markdown("""
-    <div class="card">
-        <h3>Model Notes</h3>
-        <p>
-            The trained model uses selected Ames Housing features and predicts the estimated selling price.
-            You can also add your exact RMSE and MAE values here if required in your project.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# =========================================================
-# ABOUT PAGE
-# =========================================================
 def about_page():
     hero_section()
 
     st.markdown("""
-    <div class="card">
-        <h3>ℹ️ About Project</h3>
-        <p><b>Goal:</b> Predict the selling price of houses using machine learning.</p>
-        <p><b>Dataset:</b> Ames Housing dataset.</p>
-        <p><b>Process:</b> EDA, missing value handling, feature engineering, model training, evaluation, and interface development.</p>
-        <p><b>Important Features:</b> Living area, rooms, bathrooms, neighborhood, quality, basement, garage, and house age.</p>
+    <div class="glass-card">
+        <div class="section-head">
+            <h2>About Project</h2>
+            <p>
+                This machine learning project predicts the selling price of houses using the
+                Ames Housing dataset. The model considers features like area, rooms, bathrooms,
+                location, quality, condition, garage, basement, and age.
+            </p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="card">
-        <h3>Conclusion</h3>
-        <p>
-            House prices are influenced by multiple factors such as location, living area, overall quality,
-            garage space, basement size, and house age. This web application provides an easy and responsive
-            interface for predicting house selling price.
-        </p>
+    <div class="glass-card">
+        <div class="section-head">
+            <h2>Project Workflow</h2>
+            <p>
+                • Data collection<br>
+                • Exploratory Data Analysis (EDA)<br>
+                • Missing value handling<br>
+                • Feature selection / engineering<br>
+                • Model training<br>
+                • Evaluation using RMSE / MAE<br>
+                • Deployment with Streamlit
+            </p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 # =========================================================
-# PAGE ROUTER
+# ROUTER
 # =========================================================
 if page == "🏠 Dashboard":
     dashboard_page()
@@ -930,13 +912,11 @@ elif page == "📊 Data Insights":
     data_insights_page()
 elif page == "📈 Graphs & Analysis":
     graphs_page()
-elif page == "🎯 Model Performance":
-    model_performance_page()
 elif page == "ℹ️ About Project":
     about_page()
 
 st.markdown("""
 <div class="footer">
-    Developed for House Price Prediction Machine Learning Project
+    Developed for House Price Prediction Project
 </div>
 """, unsafe_allow_html=True)
