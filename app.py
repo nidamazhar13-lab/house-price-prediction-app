@@ -9,7 +9,7 @@ import os
 # ============================================================
 
 st.set_page_config(
-    page_title="House Price Predictor",
+    page_title="HomeValue - House Price Predictor",
     page_icon="🏡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -54,7 +54,7 @@ html, body, [class*="css"] {
 .stApp {
     background:
         radial-gradient(circle at top left, rgba(79, 124, 255, 0.16), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.14), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.12), transparent 35%),
         linear-gradient(135deg, #EEF7FF 0%, #F8FBFF 50%, #EAF2FF 100%);
     color: #0F172A;
 }
@@ -71,13 +71,18 @@ header[data-testid="stHeader"] {
     background: rgba(0,0,0,0);
 }
 
-/* Sidebar */
+/* Sidebar solid clean background */
 [data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.96);
+    background: #FFFFFF !important;
     border-right: 1px solid #E2E8F0;
-    box-shadow: 8px 0 30px rgba(15, 23, 42, 0.05);
+    box-shadow: 8px 0 30px rgba(15, 23, 42, 0.08);
 }
 
+[data-testid="stSidebar"] > div {
+    background: #FFFFFF !important;
+}
+
+/* Sidebar logo */
 .sidebar-logo {
     display: flex;
     align-items: center;
@@ -111,7 +116,7 @@ header[data-testid="stHeader"] {
     font-weight: 700;
 }
 
-/* Sidebar radio */
+/* Sidebar navigation */
 div[role="radiogroup"] label {
     background: transparent;
     padding: 10px 12px;
@@ -128,7 +133,7 @@ div[role="radiogroup"] label:hover {
 /* Hero */
 .hero {
     background:
-        linear-gradient(90deg, rgba(8, 20, 48, 0.88), rgba(8, 20, 48, 0.36)),
+        linear-gradient(90deg, rgba(8, 20, 48, 0.86), rgba(8, 20, 48, 0.30)),
         url(""" + HERO_IMAGE_URL + """);
     background-size: cover;
     background-position: center;
@@ -148,7 +153,7 @@ div[role="radiogroup"] label:hover {
 
 .hero-badge {
     display: inline-block;
-    background: rgba(255,255,255,0.92);
+    background: rgba(255,255,255,0.94);
     color: #2563EB;
     padding: 9px 16px;
     border-radius: 999px;
@@ -174,7 +179,7 @@ div[role="radiogroup"] label:hover {
 
 /* Cards */
 .card {
-    background: rgba(255,255,255,0.94);
+    background: #FFFFFF;
     border: 1px solid rgba(226,232,240,0.95);
     border-radius: 28px;
     padding: 26px;
@@ -188,7 +193,7 @@ div[role="radiogroup"] label:hover {
 }
 
 .form-card {
-    background: rgba(255,255,255,0.96);
+    background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 30px;
     padding: 28px;
@@ -354,6 +359,18 @@ div[data-baseweb="select"] > div {
 
 /* Mobile */
 @media (max-width: 768px) {
+    .stApp {
+        background: linear-gradient(135deg, #EEF7FF 0%, #F8FBFF 50%, #EAF2FF 100%) !important;
+    }
+
+    [data-testid="stSidebar"] {
+        background: #FFFFFF !important;
+    }
+
+    [data-testid="stSidebar"] > div {
+        background: #FFFFFF !important;
+    }
+
     .block-container {
         padding-left: 1rem;
         padding-right: 1rem;
@@ -409,8 +426,8 @@ with st.sidebar:
     <div class="sidebar-logo">
         <div class="logo-icon">🏡</div>
         <div>
-            <div class="logo-title">House Price</div>
-            <div class="logo-subtitle">AI Predictor</div>
+            <div class="logo-title">HomeValue</div>
+            <div class="logo-subtitle">House Price Prediction</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -430,7 +447,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("""
-    <div class="card" style="padding:16px; border-radius:20px;">
+    <div class="card" style="padding:16px; border-radius:20px; box-shadow:none;">
         <b>Ames Housing Project</b><br>
         <span style="color:#64748B; font-size:13px;">Machine Learning Price Estimator</span>
     </div>
@@ -444,7 +461,7 @@ def hero_section():
     st.markdown("""
     <div class="hero">
         <div class="hero-content">
-            <div class="hero-badge">AI Real Estate Estimator</div>
+            <div class="hero-badge">Smart Home Valuation</div>
             <h1>Find Your Home’s Estimated Value</h1>
             <p>
             Predict house selling prices using property area, quality, rooms,
@@ -463,7 +480,6 @@ def metric_card(label, value, small=""):
         <div class="metric-small">{small}</div>
     </div>
     """, unsafe_allow_html=True)
-
 
 # ============================================================
 # DASHBOARD PAGE
@@ -492,7 +508,6 @@ def dashboard_page():
         </p>
     </div>
     """, unsafe_allow_html=True)
-
 
 # ============================================================
 # PREDICT PRICE PAGE
@@ -690,7 +705,6 @@ def predict_page():
         st.plotly_chart(fig, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-
 # ============================================================
 # DATA INSIGHTS PAGE
 # ============================================================
@@ -724,7 +738,6 @@ def data_insights_page():
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.warning("AmesHousing.csv file not found. Upload it to show dataset insights.")
-
 
 # ============================================================
 # GRAPHS PAGE
@@ -762,7 +775,6 @@ def graphs_page():
         fig3.update_traces(marker_color="#2563EB", opacity=0.65)
         fig3.update_layout(template="plotly_white", height=420)
         st.plotly_chart(fig3, use_container_width=True)
-
 
 # ============================================================
 # MODEL PERFORMANCE PAGE
@@ -802,7 +814,6 @@ def model_performance_page():
     </div>
     """, unsafe_allow_html=True)
 
-
 # ============================================================
 # ABOUT PAGE
 # ============================================================
@@ -841,7 +852,6 @@ def about_page():
         </p>
     </div>
     """, unsafe_allow_html=True)
-
 
 # ============================================================
 # PAGE ROUTER
