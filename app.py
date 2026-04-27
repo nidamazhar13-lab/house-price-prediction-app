@@ -4,12 +4,11 @@ import joblib
 import plotly.express as px
 import os
 
-# ============================================================
+# =========================================================
 # PAGE CONFIG
-# ============================================================
-
+# =========================================================
 st.set_page_config(
-    page_title="HomeValue - House Price Predictor",
+    page_title="HomeValue | House Price Predictor",
     page_icon="🏡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -21,12 +20,11 @@ DATA_PATH = os.path.join(BASE_DIR, "AmesHousing.csv")
 
 HERO_IMAGE_URL = "https://raw.githubusercontent.com/nidamazhar13-lab/house-price-prediction-app/main/assets/house_bg.png"
 
-# ============================================================
-# LOAD MODEL + DATA
-# ============================================================
-
+# =========================================================
+# LOAD MODEL
+# =========================================================
 if not os.path.exists(MODEL_PATH):
-    st.error("Model file not found. Please keep house_price_model.pkl in the same folder as app.py.")
+    st.error("house_price_model.pkl file not found. Please keep it in the same folder as app.py.")
     st.stop()
 
 model = joblib.load(MODEL_PATH)
@@ -39,119 +37,127 @@ def load_data():
 
 data = load_data()
 
-# ============================================================
-# CSS DESIGN
-# ============================================================
-
-st.markdown("""
+# =========================================================
+# CSS
+# =========================================================
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-html, body, [class*="css"] {
+html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
-}
+}}
 
-.stApp {
-    background:
-        radial-gradient(circle at top left, rgba(79, 124, 255, 0.16), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.12), transparent 35%),
-        linear-gradient(135deg, #EEF7FF 0%, #F8FBFF 50%, #EAF2FF 100%);
+html {{
+    scroll-behavior: smooth;
+}}
+
+body {{
     color: #0F172A;
-}
+}}
 
-.block-container {
-    max-width: 1240px !important;
-    padding-top: 1.4rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-bottom: 2rem;
-}
+.stApp {{
+    background:
+        radial-gradient(circle at top left, rgba(79, 124, 255, 0.12), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.10), transparent 30%),
+        linear-gradient(135deg, #EEF4FF 0%, #F8FBFF 55%, #EEF2FF 100%);
+    color: #0F172A;
+}}
 
-header[data-testid="stHeader"] {
+header[data-testid="stHeader"] {{
     background: rgba(0,0,0,0);
-}
+}}
 
-/* Sidebar solid clean background */
-[data-testid="stSidebar"] {
+.block-container {{
+    max-width: 1260px !important;
+    padding-top: 1.2rem;
+    padding-bottom: 2rem;
+    padding-left: 1.8rem;
+    padding-right: 1.8rem;
+}}
+
+section[data-testid="stSidebar"] {{
     background: #FFFFFF !important;
-    border-right: 1px solid #E2E8F0;
-    box-shadow: 8px 0 30px rgba(15, 23, 42, 0.08);
-}
+    border-right: 1px solid #E2E8F0 !important;
+    box-shadow: 8px 0 28px rgba(15, 23, 42, 0.06);
+}}
 
-[data-testid="stSidebar"] > div {
+section[data-testid="stSidebar"] * {{
+    color: #0F172A;
+}}
+
+[data-testid="stSidebarContent"] {{
     background: #FFFFFF !important;
-}
+}}
 
-/* Sidebar logo */
-.sidebar-logo {
+.sidebar-logo {{
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 12px 0 22px 0;
-}
+    margin: 10px 0 20px 0;
+}}
 
-.logo-icon {
-    background: linear-gradient(135deg, #4F7CFF, #8B5CF6);
-    width: 44px;
-    height: 44px;
+.logo-icon {{
+    width: 46px;
+    height: 46px;
     border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(135deg, #4F7CFF, #8B5CF6);
     color: white;
     font-size: 22px;
-    box-shadow: 0 10px 24px rgba(79, 124, 255, 0.28);
-}
+    box-shadow: 0 10px 22px rgba(79,124,255,0.28);
+}}
 
-.logo-title {
+.logo-title {{
+    font-size: 19px;
     font-weight: 900;
-    color: #0F172A;
-    font-size: 18px;
     line-height: 1.1;
-}
+    color: #0F172A;
+}}
 
-.logo-subtitle {
-    color: #64748B;
+.logo-subtitle {{
     font-size: 12px;
     font-weight: 700;
-}
+    color: #64748B;
+}}
 
-/* Sidebar navigation */
-div[role="radiogroup"] label {
+div[role="radiogroup"] > label {{
     background: transparent;
     padding: 10px 12px;
     border-radius: 14px;
     margin-bottom: 8px;
+    color: #334155 !important;
     font-weight: 700;
-    color: #334155;
-}
+}}
 
-div[role="radiogroup"] label:hover {
+div[role="radiogroup"] > label:hover {{
     background: #EEF4FF;
-}
+}}
 
-/* Hero */
-.hero {
+.hero {{
     background:
-        linear-gradient(90deg, rgba(8, 20, 48, 0.86), rgba(8, 20, 48, 0.30)),
-        url(""" + HERO_IMAGE_URL + """);
+        linear-gradient(90deg, rgba(12, 25, 50, 0.82), rgba(12, 25, 50, 0.42)),
+        url('{HERO_IMAGE_URL}');
     background-size: cover;
     background-position: center;
-    min-height: 285px;
-    border-radius: 34px;
-    padding: 44px 48px;
+    min-height: 290px;
+    border-radius: 32px;
+    padding: 42px 44px;
     display: flex;
     align-items: center;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+    box-shadow: 0 24px 55px rgba(15,23,42,0.14);
     border: 1px solid rgba(255,255,255,0.75);
-    margin-bottom: 24px;
-}
+    margin-bottom: 22px;
+    overflow: hidden;
+}}
 
-.hero-content {
+.hero-content {{
     max-width: 720px;
-}
+}}
 
-.hero-badge {
+.hero-badge {{
     display: inline-block;
     background: rgba(255,255,255,0.94);
     color: #2563EB;
@@ -159,268 +165,357 @@ div[role="radiogroup"] label:hover {
     border-radius: 999px;
     font-size: 13px;
     font-weight: 900;
-    margin-bottom: 14px;
-}
+    margin-bottom: 15px;
+}}
 
-.hero h1 {
-    color: white;
-    font-size: 48px;
+.hero h1 {{
+    color: #FFFFFF;
+    font-size: 46px;
     font-weight: 900;
-    line-height: 1.08;
+    line-height: 1.06;
     letter-spacing: -0.5px;
     margin-bottom: 14px;
-}
+}}
 
-.hero p {
+.hero p {{
     color: #EAF2FF;
     font-size: 17px;
     line-height: 1.6;
-}
+    margin: 0;
+}}
 
-/* Cards */
-.card {
-    background: #FFFFFF;
-    border: 1px solid rgba(226,232,240,0.95);
+.card {{
+    background: rgba(255,255,255,0.97);
+    border: 1px solid #E2E8F0;
     border-radius: 28px;
-    padding: 26px;
-    margin-bottom: 22px;
-    box-shadow: 0 16px 42px rgba(15,23,42,0.08);
-}
+    padding: 24px;
+    box-shadow: 0 16px 42px rgba(15,23,42,0.06);
+    margin-bottom: 20px;
+}}
 
-.card h3 {
+.card h3 {{
+    margin-top: 0;
     color: #0F172A;
     font-weight: 900;
-}
+}}
 
-.form-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
+.form-card {{
+    background: rgba(255,255,255,0.98);
+    border: 1px solid #DCE5F2;
     border-radius: 30px;
-    padding: 28px;
-    margin-bottom: 22px;
-    box-shadow: 0 18px 45px rgba(15,23,42,0.08);
-}
+    padding: 26px;
+    box-shadow: 0 16px 44px rgba(15,23,42,0.06);
+    margin-bottom: 20px;
+}}
 
-.form-title {
+.form-title {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
-}
+    gap: 16px;
+    margin-bottom: 16px;
+}}
 
-.form-title h2 {
+.form-title h2 {{
+    margin: 0;
     color: #0F172A;
     font-weight: 900;
-    margin: 0;
-}
+}}
 
-.form-title p {
+.form-title p {{
+    margin: 6px 0 0 0;
     color: #64748B;
     font-weight: 600;
-    margin: 6px 0 0 0;
-}
+}}
 
-.chip {
+.chip {{
+    display: inline-block;
     background: linear-gradient(135deg, #4F7CFF, #8B5CF6);
-    color: white;
+    color: #FFFFFF;
     padding: 10px 16px;
     border-radius: 999px;
-    font-weight: 800;
     font-size: 13px;
-}
-
-/* Tabs */
-div[data-testid="stTabs"] button {
-    background-color: #F1F5F9;
-    color: #0F172A;
-    border-radius: 999px;
-    font-weight: 800;
-    padding: 10px 18px;
-    margin-right: 8px;
-    border: 1px solid #E2E8F0;
-}
-
-div[data-testid="stTabs"] button:hover {
-    background: linear-gradient(135deg, #4F7CFF, #8B5CF6);
-    color: white;
-}
-
-/* Inputs */
-[data-testid="stNumberInput"] input {
-    background-color: #F8FBFF;
-    color: #0F172A;
-    border: 1px solid #D8E4F0;
-    border-radius: 15px;
-    font-weight: 800;
-    min-height: 42px;
-}
-
-div[data-baseweb="select"] > div {
-    background-color: #F8FBFF;
-    border: 1px solid #D8E4F0;
-    border-radius: 15px;
-    color: #0F172A;
-    font-weight: 800;
-    min-height: 42px;
-}
-
-/* Sliders */
-.stSlider [data-baseweb="slider"] div[role="slider"] {
-    background-color: #4F7CFF !important;
-    border-color: #4F7CFF !important;
-}
-
-/* Buttons */
-.stButton > button {
-    background: linear-gradient(135deg, #2563EB, #8B5CF6);
-    color: white;
-    border: none;
-    border-radius: 18px;
-    padding: 0.95rem 1rem;
-    font-size: 17px;
     font-weight: 900;
-    box-shadow: 0 14px 30px rgba(79,124,255,0.25);
-}
+    white-space: nowrap;
+}}
 
-.stButton > button:hover {
-    background: linear-gradient(135deg, #1D4ED8, #7C3AED);
-    color: white;
-}
-
-/* Metric cards */
-.metric-card {
-    background: white;
+.metric-card {{
+    background: rgba(255,255,255,0.98);
     border: 1px solid #E2E8F0;
-    padding: 24px;
     border-radius: 24px;
-    box-shadow: 0 14px 32px rgba(15,23,42,0.07);
+    padding: 20px;
+    box-shadow: 0 14px 30px rgba(15,23,42,0.05);
     margin-bottom: 16px;
-}
+}}
 
-.metric-label {
+.metric-label {{
     color: #64748B;
-    font-size: 14px;
     font-weight: 800;
-    margin-bottom: 8px;
-}
+    font-size: 14px;
+    margin-bottom: 6px;
+}}
 
-.metric-value {
+.metric-value {{
     color: #0F172A;
     font-size: 28px;
     font-weight: 900;
-}
+}}
 
-.metric-small {
-    color: #22C55E;
+.metric-small {{
+    color: #2563EB;
     font-size: 13px;
-    font-weight: 800;
+    font-weight: 700;
     margin-top: 4px;
-}
+}}
 
-/* Prediction */
-.prediction-box {
-    background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%);
-    padding: 38px;
-    border-radius: 30px;
+.prediction-box {{
+    background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 55%, #7C3AED 100%);
     color: white;
-    box-shadow: 0 18px 45px rgba(15,23,42,0.22);
-    margin-bottom: 22px;
-}
+    padding: 34px;
+    border-radius: 30px;
+    box-shadow: 0 18px 45px rgba(30,58,138,0.24);
+    margin-bottom: 20px;
+}}
 
-.prediction-box h2 {
-    color: #BFD7EA;
+.prediction-box h2 {{
+    margin: 0 0 8px 0;
+    color: #DCE9FF;
     font-size: 20px;
-    font-weight: 900;
-    margin-bottom: 8px;
-}
+    font-weight: 800;
+}}
 
-.prediction-box h1 {
-    font-size: 52px;
-    font-weight: 900;
+.prediction-box h1 {{
     margin: 0;
-}
+    font-size: 50px;
+    font-weight: 900;
+}}
 
-.info-box {
+.info-box {{
     background: #F8FBFF;
-    padding: 18px;
-    border-radius: 18px;
-    border-left: 6px solid #4F7CFF;
-    margin-bottom: 15px;
+    border-left: 5px solid #4F7CFF;
+    padding: 16px;
+    border-radius: 16px;
     color: #0F172A;
-}
+    margin-bottom: 15px;
+}}
 
-.footer {
+.footer {{
     text-align: center;
     color: #64748B;
     font-size: 14px;
-    font-weight: 800;
-    margin-top: 28px;
-}
+    font-weight: 700;
+    margin-top: 24px;
+}}
 
-/* Mobile */
-@media (max-width: 768px) {
-    .stApp {
-        background: linear-gradient(135deg, #EEF7FF 0%, #F8FBFF 50%, #EAF2FF 100%) !important;
-    }
+.stDataFrame {{
+    border-radius: 18px !important;
+    overflow: hidden;
+}}
 
-    [data-testid="stSidebar"] {
-        background: #FFFFFF !important;
-    }
+div[data-baseweb="tab-list"] {{
+    gap: 12px;
+}}
 
-    [data-testid="stSidebar"] > div {
-        background: #FFFFFF !important;
-    }
+div[data-baseweb="tab"] {{
+    background: #F6F8FC !important;
+    border: 1px solid #DCE5F2 !important;
+    border-radius: 999px !important;
+    color: #0F172A !important;
+    font-weight: 800 !important;
+    padding: 10px 18px !important;
+}}
 
-    .block-container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-top: 1rem;
-    }
+div[data-baseweb="tab"][aria-selected="true"] {{
+    background: linear-gradient(135deg, #4F7CFF, #8B5CF6) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 10px 24px rgba(79,124,255,0.24);
+}}
 
-    .hero {
-        min-height: 240px;
+[data-testid="stNumberInput"] input {{
+    background: #F8FBFF !important;
+    border: 1px solid #D7E2F0 !important;
+    border-radius: 15px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    min-height: 42px !important;
+}}
+
+div[data-baseweb="select"] > div {{
+    background: #F8FBFF !important;
+    border: 1px solid #D7E2F0 !important;
+    border-radius: 15px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    min-height: 42px !important;
+}}
+
+.stSlider {{
+    padding-top: 4px;
+}}
+
+.stSlider [data-baseweb="slider"] {{
+    padding-top: 8px;
+    padding-bottom: 8px;
+}}
+
+.stSlider [data-baseweb="slider"] > div > div {{
+    background: linear-gradient(90deg, #4F7CFF, #8B5CF6) !important;
+    height: 6px !important;
+    border-radius: 999px !important;
+}}
+
+.stSlider [data-baseweb="slider"] div[role="slider"] {{
+    background: #ffffff !important;
+    border: 4px solid #4F7CFF !important;
+    box-shadow: 0 3px 12px rgba(79,124,255,0.28);
+}}
+
+.stSlider [data-testid="stTickBar"] {{
+    display: none;
+}}
+
+.stButton > button,
+div[data-testid="stFormSubmitButton"] > button {{
+    width: 100%;
+    min-height: 56px;
+    border: none !important;
+    border-radius: 18px !important;
+    color: white !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    background: linear-gradient(135deg, #2563EB 0%, #4F7CFF 45%, #8B5CF6 100%) !important;
+    box-shadow: 0 16px 30px rgba(79,124,255,0.28);
+    transition: all 0.25s ease-in-out;
+}}
+
+.stButton > button:hover,
+div[data-testid="stFormSubmitButton"] > button:hover {{
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(79,124,255,0.34);
+}}
+
+.stButton > button:focus,
+div[data-testid="stFormSubmitButton"] > button:focus {{
+    outline: none !important;
+    box-shadow: 0 0 0 0.18rem rgba(79,124,255,0.20);
+}}
+
+label, .stMarkdown, p, h1, h2, h3, h4, h5 {{
+    color: #0F172A;
+}}
+
+@media (max-width: 992px) {{
+    .hero {{
+        min-height: 250px;
         padding: 26px;
         border-radius: 24px;
-        align-items: flex-end;
-    }
+    }}
 
-    .hero h1 {
-        font-size: 31px;
-    }
-
-    .hero p {
-        font-size: 14px;
-    }
-
-    .form-card, .card {
-        padding: 18px;
-        border-radius: 22px;
-    }
-
-    .form-title {
-        display: block;
-    }
-
-    .chip {
-        display: inline-block;
-        margin-top: 10px;
-    }
-
-    .prediction-box h1 {
+    .hero h1 {{
         font-size: 34px;
-    }
+    }}
 
-    .metric-value {
+    .hero p {{
+        font-size: 15px;
+    }}
+
+    .form-title {{
+        flex-direction: column;
+        align-items: flex-start;
+    }}
+}}
+
+@media (max-width: 768px) {{
+    .block-container {{
+        padding-top: 0.8rem;
+        padding-left: 0.9rem;
+        padding-right: 0.9rem;
+        padding-bottom: 1.5rem;
+    }}
+
+    .stApp {{
+        background: linear-gradient(135deg, #EEF4FF 0%, #F8FBFF 55%, #EEF2FF 100%) !important;
+    }}
+
+    section[data-testid="stSidebar"] {{
+        background: #FFFFFF !important;
+    }}
+
+    [data-testid="stSidebarContent"] {{
+        background: #FFFFFF !important;
+    }}
+
+    .hero {{
+        min-height: 230px;
+        padding: 22px;
+        border-radius: 22px;
+        align-items: flex-end;
+    }}
+
+    .hero h1 {{
+        font-size: 29px;
+    }}
+
+    .hero p {{
+        font-size: 14px;
+    }}
+
+    .form-card, .card {{
+        padding: 16px;
+        border-radius: 20px;
+    }}
+
+    .metric-value {{
         font-size: 22px;
-    }
-}
+    }}
+
+    .prediction-box {{
+        padding: 24px;
+        border-radius: 22px;
+    }}
+
+    .prediction-box h1 {{
+        font-size: 34px;
+    }}
+
+    div[data-baseweb="tab"] {{
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }}
+}}
 </style>
 """, unsafe_allow_html=True)
 
-# ============================================================
-# SIDEBAR
-# ============================================================
+# =========================================================
+# HELPER FUNCTIONS
+# =========================================================
+def hero_section():
+    st.markdown("""
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Smart Home Valuation</div>
+            <h1>Find Your Home’s Estimated Value</h1>
+            <p>
+                Predict house selling prices using area, rooms, bathrooms, location,
+                quality, basement, garage and house age — powered by machine learning.
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
+def metric_card(label, value, small=""):
+    st.markdown(f"""
+    <div class="metric-card">
+        <div class="metric-label">{label}</div>
+        <div class="metric-value">{value}</div>
+        <div class="metric-small">{small}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# =========================================================
+# SIDEBAR
+# =========================================================
 with st.sidebar:
     st.markdown("""
     <div class="sidebar-logo">
@@ -449,42 +544,13 @@ with st.sidebar:
     st.markdown("""
     <div class="card" style="padding:16px; border-radius:20px; box-shadow:none;">
         <b>Ames Housing Project</b><br>
-        <span style="color:#64748B; font-size:13px;">Machine Learning Price Estimator</span>
+        <span style="color:#64748B; font-size:13px;">Responsive ML Price Estimator</span>
     </div>
     """, unsafe_allow_html=True)
 
-# ============================================================
-# HELPER COMPONENTS
-# ============================================================
-
-def hero_section():
-    st.markdown("""
-    <div class="hero">
-        <div class="hero-content">
-            <div class="hero-badge">Smart Home Valuation</div>
-            <h1>Find Your Home’s Estimated Value</h1>
-            <p>
-            Predict house selling prices using property area, quality, rooms,
-            location, garage, basement and age — powered by machine learning.
-            </p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-
-def metric_card(label, value, small=""):
-    st.markdown(f"""
-    <div class="metric-card">
-        <div class="metric-label">{label}</div>
-        <div class="metric-value">{value}</div>
-        <div class="metric-small">{small}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ============================================================
+# =========================================================
 # DASHBOARD PAGE
-# ============================================================
-
+# =========================================================
 def dashboard_page():
     hero_section()
 
@@ -492,27 +558,26 @@ def dashboard_page():
     with c1:
         metric_card("Dataset", "Ames", "Housing data")
     with c2:
-        metric_card("Prediction Type", "Regression", "SalePrice target")
+        metric_card("Model Type", "Regression", "House price prediction")
     with c3:
-        metric_card("Input Features", "16", "Area, rooms, location")
+        metric_card("Input Features", "16", "Area, rooms, quality")
     with c4:
-        metric_card("Interface", "Responsive", "Mobile + laptop")
+        metric_card("Interface", "Responsive", "Mobile + laptop + tablet")
 
     st.markdown("""
     <div class="card">
         <h3>Project Overview</h3>
         <p>
-        This dashboard predicts house selling price using machine learning.
-        The user can enter property details, view dataset insights,
-        explore graphs, and understand important price factors.
+            This application predicts the selling price of a house using machine learning.
+            Users can enter house details, explore data insights, see analysis graphs,
+            and understand the important factors affecting house prices.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-# ============================================================
-# PREDICT PRICE PAGE
-# ============================================================
-
+# =========================================================
+# PREDICT PAGE
+# =========================================================
 def predict_page():
     hero_section()
 
@@ -521,7 +586,7 @@ def predict_page():
         <div class="form-title">
             <div>
                 <h2>🏠 House Price Prediction Form</h2>
-                <p>Fill the house details below. Results will appear only after clicking Predict.</p>
+                <p>Fill all important details below and click the button to get the estimated selling price.</p>
             </div>
             <div class="chip">Ames Housing Model</div>
         </div>
@@ -538,7 +603,7 @@ def predict_page():
                 gr_liv_area = st.number_input(
                     "Living Area / Gr Liv Area (sq ft)",
                     min_value=0,
-                    max_value=5642,
+                    max_value=7000,
                     value=0,
                     step=50
                 )
@@ -546,31 +611,31 @@ def predict_page():
                 lot_area = st.number_input(
                     "Lot Area (sq ft)",
                     min_value=0,
-                    max_value=215245,
+                    max_value=250000,
                     value=0,
                     step=100
                 )
 
             with c2:
-                bedrooms = st.slider("Bedrooms", 0, 8, 0)
-                total_rooms = st.slider("Total Rooms Above Ground", 0, 15, 0)
+                bedrooms = st.slider("Bedrooms", 0, 20, 0)
+                total_rooms = st.slider("Total Rooms Above Ground", 0, 30, 0)
 
             with c3:
-                full_bath = st.slider("Full Bathrooms", 0, 4, 0)
-                half_bath = st.slider("Half Bathrooms", 0, 2, 0)
+                full_bath = st.slider("Full Bathrooms", 0, 15, 0)
+                half_bath = st.slider("Half Bathrooms", 0, 10, 0)
 
         with tab2:
             c1, c2, c3 = st.columns(3)
 
             with c1:
                 overall_qual = st.slider("Overall Quality", 0, 10, 0)
-                overall_cond = st.slider("Overall Condition", 0, 9, 0)
+                overall_cond = st.slider("Overall Condition", 0, 10, 0)
 
             with c2:
                 total_bsmt_sf = st.number_input(
                     "Total Basement Area (sq ft)",
                     min_value=0,
-                    max_value=6110,
+                    max_value=7000,
                     value=0,
                     step=50
                 )
@@ -578,15 +643,15 @@ def predict_page():
                 garage_area = st.number_input(
                     "Garage Area (sq ft)",
                     min_value=0,
-                    max_value=1488,
+                    max_value=1800,
                     value=0,
-                    step=50
+                    step=25
                 )
 
             with c3:
-                garage_cars = st.slider("Garage Car Capacity", 0, 5, 0)
-                house_age = st.slider("House Age", 0, 136, 0)
-                remod_age = st.slider("Years Since Remodel", 0, 60, 0)
+                garage_cars = st.slider("Garage Car Capacity", 0, 10, 0)
+                house_age = st.slider("House Age", 0, 200, 0)
+                remod_age = st.slider("Years Since Remodel", 0, 100, 0)
 
         with tab3:
             c1, c2, c3 = st.columns(3)
@@ -615,7 +680,7 @@ def predict_page():
                     ["Select House Style", "1Story", "2Story", "1.5Fin", "1.5Unf", "SFoyer", "SLvl", "2.5Unf", "2.5Fin"]
                 )
 
-        submit = st.form_submit_button("Predict House Price", use_container_width=True)
+        submit = st.form_submit_button("✨ Predict House Price", use_container_width=True)
 
     if submit:
         required_missing = (
@@ -630,7 +695,7 @@ def predict_page():
         )
 
         if required_missing:
-            st.warning("Please fill the required fields: living area, lot area, total rooms, quality, condition, location, building type, and house style.")
+            st.warning("Please fill the required fields properly before prediction.")
             return
 
         input_data = pd.DataFrame({
@@ -663,7 +728,7 @@ def predict_page():
 
         c1, c2, c3, c4 = st.columns(4)
         with c1:
-            metric_card("Living Area", f"{gr_liv_area:,} sq ft", "Input value")
+            metric_card("Living Area", f"{gr_liv_area:,} sq ft", "User input")
         with c2:
             metric_card("Total Rooms", total_rooms, "Above ground")
         with c3:
@@ -689,26 +754,31 @@ def predict_page():
             ]
         })
 
-        fig = px.bar(chart_data, x="Feature", y="Value", text="Value", title="Input Feature Visualization")
+        fig = px.bar(
+            chart_data,
+            x="Feature",
+            y="Value",
+            text="Value",
+            title="Input Feature Visualization"
+        )
         fig.update_traces(marker_color="#4F7CFF", textfont_color="#0F172A")
         fig.update_layout(
-            height=440,
-            paper_bgcolor="rgba(255,255,255,0.96)",
-            plot_bgcolor="rgba(248,251,255,0.96)",
+            height=430,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="#F8FBFF",
             font=dict(color="#0F172A"),
-            title_font=dict(color="#0F172A", size=22),
-            xaxis=dict(gridcolor="rgba(15,23,42,0.08)"),
-            yaxis=dict(gridcolor="rgba(15,23,42,0.08)")
+            title_font=dict(size=22, color="#0F172A"),
+            xaxis=dict(gridcolor="rgba(15,23,42,0.06)"),
+            yaxis=dict(gridcolor="rgba(15,23,42,0.06)")
         )
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.plotly_chart(fig, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-# ============================================================
+# =========================================================
 # DATA INSIGHTS PAGE
-# ============================================================
-
+# =========================================================
 def data_insights_page():
     hero_section()
 
@@ -716,8 +786,8 @@ def data_insights_page():
     <div class="card">
         <h3>📊 Data Insights</h3>
         <p>
-        The Ames Housing dataset contains property features such as area, rooms,
-        bathrooms, neighborhood, garage, basement, quality, condition, and selling price.
+            The Ames Housing dataset contains house-related features such as area, rooms,
+            bathrooms, quality, condition, garage, basement, neighborhood, and selling price.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -729,57 +799,69 @@ def data_insights_page():
         with c2:
             metric_card("Columns", data.shape[1], "Dataset features")
         with c3:
-            missing_count = int(data.isnull().sum().sum())
-            metric_card("Missing Values", f"{missing_count:,}", "Before handling")
+            metric_card("Missing Values", f"{int(data.isnull().sum().sum()):,}", "Before cleaning")
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("Dataset Preview")
         st.dataframe(data.head(20), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
-        st.warning("AmesHousing.csv file not found. Upload it to show dataset insights.")
+        st.warning("AmesHousing.csv file not found.")
 
-# ============================================================
+# =========================================================
 # GRAPHS PAGE
-# ============================================================
-
+# =========================================================
 def graphs_page():
     hero_section()
 
     st.markdown("""
     <div class="card">
         <h3>📈 Graphs & Analysis</h3>
-        <p>Visual analysis helps understand which features affect house price.</p>
+        <p>These graphs help visualize important trends in house prices.</p>
     </div>
     """, unsafe_allow_html=True)
 
     if data is None:
-        st.warning("AmesHousing.csv file not found. Upload it to show graphs.")
+        st.warning("AmesHousing.csv file not found.")
         return
 
     if "SalePrice" in data.columns:
         fig1 = px.histogram(data, x="SalePrice", nbins=40, title="Sale Price Distribution")
         fig1.update_traces(marker_color="#4F7CFF")
-        fig1.update_layout(template="plotly_white", height=420)
+        fig1.update_layout(
+            template="plotly_white",
+            height=420,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="#F8FBFF"
+        )
         st.plotly_chart(fig1, use_container_width=True)
 
     if "Overall Qual" in data.columns and "SalePrice" in data.columns:
         avg_quality = data.groupby("Overall Qual")["SalePrice"].mean().reset_index()
         fig2 = px.bar(avg_quality, x="Overall Qual", y="SalePrice", title="Average Sale Price by Overall Quality")
         fig2.update_traces(marker_color="#8B5CF6")
-        fig2.update_layout(template="plotly_white", height=420)
+        fig2.update_layout(
+            template="plotly_white",
+            height=420,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="#F8FBFF"
+        )
         st.plotly_chart(fig2, use_container_width=True)
 
     if "Gr Liv Area" in data.columns and "SalePrice" in data.columns:
         fig3 = px.scatter(data, x="Gr Liv Area", y="SalePrice", title="Living Area vs Sale Price")
         fig3.update_traces(marker_color="#2563EB", opacity=0.65)
-        fig3.update_layout(template="plotly_white", height=420)
+        fig3.update_layout(
+            template="plotly_white",
+            height=420,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="#F8FBFF"
+        )
         st.plotly_chart(fig3, use_container_width=True)
 
-# ============================================================
+# =========================================================
 # MODEL PERFORMANCE PAGE
-# ============================================================
-
+# =========================================================
 def model_performance_page():
     hero_section()
 
@@ -787,57 +869,42 @@ def model_performance_page():
     <div class="card">
         <h3>🎯 Model Performance</h3>
         <p>
-        This section explains how the machine learning model was evaluated.
-        Regression models are commonly evaluated using RMSE and MAE.
+            The house price model is evaluated using regression metrics such as RMSE and MAE.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        metric_card("Evaluation Metric", "RMSE", "Root Mean Squared Error")
+        metric_card("Metric", "RMSE", "Root Mean Squared Error")
     with c2:
-        metric_card("Evaluation Metric", "MAE", "Mean Absolute Error")
+        metric_card("Metric", "MAE", "Mean Absolute Error")
     with c3:
-        metric_card("Target Variable", "SalePrice", "Selling price")
+        metric_card("Target", "SalePrice", "Selling price")
 
     st.markdown("""
     <div class="card">
         <h3>Model Notes</h3>
         <p>
-        The model was trained on selected Ames Housing features. The saved model file
-        is loaded through <b>house_price_model.pkl</b> and used to predict estimated selling price.
-        </p>
-        <p>
-        You can add your exact RMSE and MAE values from your notebook in this page if required by your instructor.
+            The trained model uses selected Ames Housing features and predicts the estimated selling price.
+            You can also add your exact RMSE and MAE values here if required in your project.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-# ============================================================
+# =========================================================
 # ABOUT PAGE
-# ============================================================
-
+# =========================================================
 def about_page():
     hero_section()
 
     st.markdown("""
     <div class="card">
         <h3>ℹ️ About Project</h3>
-        <p>
-        <b>Goal:</b> Predict the selling price of houses using machine learning.
-        </p>
-        <p>
-        <b>Dataset:</b> Ames Housing dataset.
-        </p>
-        <p>
-        <b>Process:</b> EDA, missing value handling, feature engineering,
-        model training, model evaluation, and Streamlit interface development.
-        </p>
-        <p>
-        <b>Important Features:</b> Living area, lot area, rooms, bathrooms,
-        neighborhood, quality, condition, garage, basement, and house age.
-        </p>
+        <p><b>Goal:</b> Predict the selling price of houses using machine learning.</p>
+        <p><b>Dataset:</b> Ames Housing dataset.</p>
+        <p><b>Process:</b> EDA, missing value handling, feature engineering, model training, evaluation, and interface development.</p>
+        <p><b>Important Features:</b> Living area, rooms, bathrooms, neighborhood, quality, basement, garage, and house age.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -845,18 +912,16 @@ def about_page():
     <div class="card">
         <h3>Conclusion</h3>
         <p>
-        House prices are strongly affected by location, living area, overall quality,
-        garage space, basement area, and property age. The final application provides
-        a simple and attractive interface where users can enter house details and receive
-        an estimated selling price.
+            House prices are influenced by multiple factors such as location, living area, overall quality,
+            garage space, basement size, and house age. This web application provides an easy and responsive
+            interface for predicting house selling price.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-# ============================================================
+# =========================================================
 # PAGE ROUTER
-# ============================================================
-
+# =========================================================
 if page == "🏠 Dashboard":
     dashboard_page()
 elif page == "🔮 Predict Price":
